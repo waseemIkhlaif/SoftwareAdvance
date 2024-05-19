@@ -14,4 +14,7 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false
         },
     });
+    KnowledgeBase.associate() = models => {
+        KnowledgeBase.belongsTo(models.user);
+    }
 }

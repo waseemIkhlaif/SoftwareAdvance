@@ -22,4 +22,7 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false
         },
     });
+    user.associate() = models => {
+        user.hasMany(models.knowledgeBaseModel);
+    }
 }
