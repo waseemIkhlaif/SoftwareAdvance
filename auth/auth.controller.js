@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 const bcrypt = require('bcrypt');
-const {, signupSchema } = require('../../services/validation/validation.js');
 
                             return res.status(400).json({ message: 'Unknown role' });
                     }
