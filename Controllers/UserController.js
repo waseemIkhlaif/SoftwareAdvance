@@ -3,10 +3,10 @@ const router = express.Router();
 const userModel = require("../models/UserModel");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-
+const JWT_SECRET_KEY = '1234#';
 
 const generateToken = (user) => {
-    return jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '1h' });
 };
 //create new user
 router.post('/register', async (req, res) => {
