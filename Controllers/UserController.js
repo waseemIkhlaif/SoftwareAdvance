@@ -1,15 +1,54 @@
 const express = require('express');
 const router = express.Router();
 const userModel = require("../models/UserModel");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
+
+const generateToken = (user) => {
+    return jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+};
 //create new user
-router.post('/', async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
-        const NewUser = await userModel.create(req.body);
-        res.status(201).json(NewUser);
+        const { username, email, password } = req.body;
+        const existingUser = await userModel.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User already exists' });
+        } else {
+            const newUser = await userModel.create(req.body);
+            res.status(201).json(newUser);
+        }
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
+});
+//login user
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await userModel.findOne({ where: { email } });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials Email' });
+        }
+        const isMatch = await bcrypt.compare(user.password, password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid credentials Password' });
+            console.log(isMatch);
+        }
+        res.json({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            token: generateToken(userModel),
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+// user logout
+router.get('/logout', (req, res) => {
+    res.json({ message: 'Logged out successfully' });
 });
 // get all users
 router.get('/', async (req, res) => {
