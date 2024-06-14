@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userModel = require("../models/UserModel");
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+
 
 
 const generateToken = (user) => {
@@ -23,33 +22,7 @@ router.post('/register', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-//login user
-router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await userModel.findOne({ where: { email } });
-        if (!user) {
-            return res.status(401).json({ error: 'Invalid credentials Email' });
-        }
-        const isMatch = await bcrypt.compare(user.password, password);
-        if (!isMatch) {
-            return res.status(401).json({ error: 'Invalid credentials Password' });
-            console.log(isMatch);
-        }
-        res.json({
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            token: generateToken(userModel),
-        });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-// user logout
-router.get('/logout', (req, res) => {
-    res.json({ message: 'Logged out successfully' });
-});
+
 // get all users
 router.get('/', async (req, res) => {
     try {
@@ -104,4 +77,6 @@ router.delete("/:id", async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+
+
 module.exports = router;
